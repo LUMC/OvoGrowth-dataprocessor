@@ -1,0 +1,35 @@
+Building DAG of jobs...
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	create_CPM
+	3
+
+rule create_CPM:
+    input: input/training_adult.txt
+    output: output/cpm/training_adult.tsv
+    log: output/evaluation/training_adult_CPM.log
+    jobid: 2
+    wildcards: output_dir=output, file_name=training_adult
+
+Finished job 2.
+1 of 3 steps (33%) done
+
+rule create_CPM:
+    input: input/training_fetal.txt
+    output: output/cpm/training_fetal.tsv
+    log: output/evaluation/training_fetal_CPM.log
+    jobid: 1
+    wildcards: output_dir=output, file_name=training_fetal
+
+Finished job 1.
+2 of 3 steps (67%) done
+
+localrule all:
+    input: output/cpm/training_adult.tsv, output/cpm/training_fetal.tsv
+    jobid: 0
+
+Finished job 0.
+3 of 3 steps (100%) done

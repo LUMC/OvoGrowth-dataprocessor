@@ -1,0 +1,13 @@
+Building DAG of jobs...
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	create_database
+	1
+
+Job 0: Creating the working database
+
+Will exit after finishing currently running jobs.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2020-04-23T123247.522202.snakemake.log

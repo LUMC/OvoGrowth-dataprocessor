@@ -1,0 +1,15 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	create_database
+	1
+
+[Thu Apr 23 13:13:53 2020]
+Job 0: Creating the working database
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/.snakemake/log/2020-04-23T131353.687329.snakemake.log

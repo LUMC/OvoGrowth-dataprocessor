@@ -1,0 +1,4 @@
+ModuleNotFoundError in line 1 of /home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile:
+No module named 'sqlalchemy'
+  File "/home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile", line 1, in <module>
+  File "/home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Database.py", line 1, in <module>

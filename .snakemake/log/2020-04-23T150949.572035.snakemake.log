@@ -1,0 +1,27 @@
+Building DAG of jobs...
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	create_CPM
+	2
+
+rule create_CPM:
+    input: input/training_adult.txt
+    output: output/cpm/training_adult.tsv
+    jobid: 2
+    wildcards: output_dir=output, file_name=training_adult
+
+Error in rule create_CPM:
+    jobid: 2
+    output: output/cpm/training_adult.tsv
+
+RuleException:
+CalledProcessError in line 34 of /home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile:
+Command ' set -euo pipefail;  Rscript create_CPM.R input/training_adult.txtoutput/cpm/training_adult.tsv ' returned non-zero exit status 1.
+  File "/home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile", line 34, in __rule_create_CPM
+  File "/usr/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+Will exit after finishing currently running jobs.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2020-04-23T150949.572035.snakemake.log
