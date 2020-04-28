@@ -3,3 +3,5 @@ config.yml
 input/
 output/
 logs/
+.snakemake/
+__pycache__/
