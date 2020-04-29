@@ -1,3 +1,4 @@
+import sqlalchemy
 from sqlalchemy import create_engine
 
 
@@ -58,6 +59,9 @@ class db:
         existing_databases = self.connection.execute("SHOW DATABASES;")
         return True if name in [d[0] for d in existing_databases] else False
 
+    def escape_file(self, file):
+        return sqlalchemy.text(open(file).read())
+
     def get_db_databases(self):
         self.connect()
         result = self.connection.execute('SHOW databases;')
@@ -73,3 +77,8 @@ class db:
             )
             self.connection.close()
             return [item for item in result]
+
+if __name__ == '__main__':
+    DB = db('mysql', 'pymysql', "localhost", "root", "password")
+    name = 'KeyGenes_tmp_{}'.format("test")
+    DB.add_db(name)

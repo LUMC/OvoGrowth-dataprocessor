@@ -5,16 +5,3 @@ output_dir: output
 DB_HOST: localhost
 DB_USERNAME: root
 DB_PASSWORD: password
-data_group_name:
-  -
-    name: adult
-    target: adult
-  -
-    name: 9-weeks
-    target: 9
-  -
-    name: 16:18 weeks
-    target: 16-18
-  -
-    name: 22-weeks
-    target: 22

@@ -17,8 +17,12 @@ def get_alias(ensg_id):
 
 
 def get_gene_information(input, output):
+    n=0
     with open(output, 'w') as f:
         for line in open(input):
+            n+=1
+            if n > 10:
+                break
             gene_id = line.replace('\n', '')
             gene_info = get_alias(gene_id)
             print(gene_info)
