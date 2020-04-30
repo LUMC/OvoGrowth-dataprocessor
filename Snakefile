@@ -127,4 +127,4 @@ rule insert_to_database:
         """{input.expressions} {output.db} """
          """{output.stage} {output.tissue} &> {log}"""
 
- rule run_material_views:
+ # rule run_material_views:
