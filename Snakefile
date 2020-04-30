@@ -1,6 +1,6 @@
 import random
 import string
-from helpers.Database import db
+from scripts.helpers.Database import db
 
 # Config section
 input_files = config['input']
@@ -21,10 +21,9 @@ def gene_inputs(wildcards):
 # Rule section
 rule all:
     input:
-         expand("{output_dir}/expr/{file_name}_expression.tsv", output_dir="../"+output_dir, file_name=input_file_names),
-         expand("{output_dir}/collections/genes.csv", output_dir="../"+output_dir),
-         expand("{output_dir}/database/name.txt", output_dir=output_dir),
-         expand("{output_dir}/database/schema.txt", output_dir="../"+output_dir)
+         expand("{output_dir}/expr/{file_name}_expression.tsv", output_dir=output_dir, file_name=input_file_names),
+         expand("{output_dir}/collections/genes.csv", output_dir=output_dir),
+         expand("{output_dir}/database/inserted.txt", output_dir=output_dir)
 
 rule create_CPM:
     input:
@@ -97,21 +96,35 @@ rule create_database:
         with open(output[0], "w") as out:
             out.write(name)
 
-# rule init_db_schema:
-#     input:
-#         name="{output_dir}/database/name.txt",
-#         schema="files/schema.sql"
-#     output:
-#         "{output_dir}/database/schema.txt"
-#     shell:
-#         """bash scripts/init_db_schema.sh {db_username} {db_password} {input.name} {input.schema} {output}"""
+rule init_db_schema:
+    input:
+        name="{output_dir}/database/name.txt",
+        schema="files/schema.sql"
+    output:
+        "{output_dir}/database/schema.txt"
+    log:
+        "{output_dir}/logs/init_db_schema.txt"
+    shell:
+        """bash scripts/init_db_schema.sh {db_username} {db_password} {input.name} {input.schema} {output} &> {log}"""
 
-# rule insert_to_database:
-#     input:
-#          db="{output_dir}/database/name.txt",
-#          expressions="{output_dir}/collections/expression.csv",
-#          genes="{output_dir}/collections/genes_names.csv",
-#          tissues="{output_dir}/collections/tissues.tsv",
-#          groups="{output_dir}/collections/groups.tsv"
-#     output:
-#          db="{output_dir}/database/inserted.txt"
+rule insert_to_database:
+    input:
+         db="{output_dir}/database/name.txt",
+         schema="{output_dir}/database/schema.txt",
+         expressions="{output_dir}/collections/expression.csv",
+         genes="{output_dir}/collections/genes.csv",
+         tissues="{output_dir}/collections/tissues.tsv",
+         groups="{output_dir}/collections/groups.tsv"
+    output:
+         db="{output_dir}/database/inserted.txt",
+         tissue="{output_dir}/database/tissue.csv",
+         stage="{output_dir}/database/stage.csv"
+    log:
+        "{output_dir}/logs/insert_to_database.txt"
+    shell:
+        """python3 scripts/insert_to_database.py {input.db} {db_host} {db_username} {db_password} {input.genes}"""
+        """ {input.tissues} {input.groups}  """
+        """{input.expressions} {output.db} """
+         """{output.stage} {output.tissue} &> {log}"""
+
+ rule run_material_views:

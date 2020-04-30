@@ -4,4 +4,4 @@ input:
 output_dir: output
 DB_HOST: localhost
 DB_USERNAME: root
-DB_PASSWORD: password
+DB_PASSWORD: secret

@@ -91,7 +91,7 @@ CREATE TABLE `transcript` (
   `gene` int(10) unsigned DEFAULT NULL,
   `stage` int(10) unsigned DEFAULT NULL,
    `count` int(11) DEFAULT NULL,
-    `sex` int(11) DEFAULT NULL,
+    `sex` varchar(1) DEFAULT NULL,
   `CPM` float(11,3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `gene_index` (`gene`),

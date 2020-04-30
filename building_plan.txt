@@ -21,9 +21,9 @@ STEPS:
 5: Initialise working database *
 
 6: Insert gene refs to the database =
-	-> Correct if deprecated!
+	-> Correct if deprecated! *
 
-7: Insert expression tot the database
+7: Insert expression tot the database *
 
 8: Run material views
 
