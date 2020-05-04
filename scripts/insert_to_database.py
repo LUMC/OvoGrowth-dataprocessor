@@ -1,6 +1,7 @@
 import time, sys
 from helpers.Database import db
 
+
 class Seeder(db):
 
     def __init__(self, dialect, driver, host, username, password, database):

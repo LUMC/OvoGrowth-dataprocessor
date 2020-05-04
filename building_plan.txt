@@ -25,6 +25,6 @@ STEPS:
 
 7: Insert expression tot the database *
 
-8: Run material views
+8: Run material views *
 
 9: Export database tables to .sql file 

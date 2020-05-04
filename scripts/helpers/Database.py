@@ -46,13 +46,14 @@ class db:
             return False
 
     def add_db(self, name):
+        self.drop_db(name)
         self.connect()
         self.connection.execute('CREATE DATABASE {name}'.format(name=name))
         self.connection.close()
 
     def drop_db(self, name):
         self.connect()
-        self.connection.execute('DROP DATABASE {name}'.format(name=name))
+        self.connection.execute('DROP DATABASE IF EXISTS {name}'.format(name=name))
         self.connection.close()
 
     def check_name_unique(self, name):

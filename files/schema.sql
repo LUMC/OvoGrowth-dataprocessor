@@ -33,7 +33,8 @@ CREATE TABLE `gene` (
   `ensg` varchar(200) DEFAULT NULL,
   `old_ensg` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `ensg` (`ensg`)
+  UNIQUE KEY `ensg` (`ensg`),
+  INDEX (ensg)
 ) ENGINE=InnoDB AUTO_INCREMENT=65298 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -111,7 +112,9 @@ CREATE TABLE `transcript_mv` (
   `gene` int(11) NOT NULL,
   `tissue` int(11) NOT NULL,
   `count_avg` decimal(10,2) NOT NULL,
-  UNIQUE KEY `product` (`gene`,`tissue`)
+  `CPM_avg` decimal(10,2) NOT NULL,
+  UNIQUE KEY `product` (`gene`,`tissue`),
+  INDEX (CPM_avg)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*!40101 SET character_set_client = @saved_cs_client */;

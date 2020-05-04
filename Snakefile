@@ -23,7 +23,7 @@ rule all:
     input:
          expand("{output_dir}/expr/{file_name}_expression.tsv", output_dir=output_dir, file_name=input_file_names),
          expand("{output_dir}/collections/genes.csv", output_dir=output_dir),
-         expand("{output_dir}/database/inserted.txt", output_dir=output_dir)
+         expand("{output_dir}/database/material_views.txt", output_dir=output_dir)
 
 rule create_CPM:
     input:
@@ -83,18 +83,20 @@ rule get_gene_info:
         genes="{output_dir}/collections/genes_names.tsv"
     output:
         genes="{output_dir}/collections/genes.csv"
+    log:
+        "{output_dir}/logs/gene_info.txt"
     shell:
-        "python3 scripts/get_gene_annotation.py {input.genes} {output.genes}"
+        "python3 scripts/get_gene_annotation.py {input.genes} {output.genes} &> {log}"
 
 rule create_database:
-    output: "{output_dir}/database/name.txt"
-    message: "Creating the working database"
+    output:
+        "{output_dir}/database/name.txt"
+    message:
+        "Creating the working database"
+    log:
+        "{output_dir}/logs/create_db.txt"
     run:
-        DB = db('mysql', 'pymysql', db_host, db_username, db_password)
-        name='KeyGenes_tmp_{}'.format(random_string(5))
-        DB.add_db(name)
-        with open(output[0], "w") as out:
-            out.write(name)
+        """python3 scripts/create_db.py {db_host} {db_username} {db_password} {output} &> {log}"""
 
 rule init_db_schema:
     input:
@@ -127,4 +129,14 @@ rule insert_to_database:
         """{input.expressions} {output.db} """
          """{output.stage} {output.tissue} &> {log}"""
 
- # rule run_material_views:
+rule run_material_views:
+    input:
+         db_name="{output_dir}/database/name.txt",
+         db="{output_dir}/database/inserted.txt"
+    output:
+         "{output_dir}/database/material_views.txt"
+    log:
+       "{output_dir}/logs/material_views.txt"
+    shell:
+        """python3 scripts/run_material_views.py""" 
+        """ {input.db_name} {db_host} {db_username} {db_password} {output} &> {log}"""

@@ -1,165 +1,39 @@
-import time, sys
+import sys
+import sqlalchemy
 from helpers.Database import db
 
-class Seeder(db):
 
-    def __init__(self, dialect, driver, host, username, password, database):
-        super(Seeder, self).__init__(dialect, driver, host, username, password)
-        self.database = database
+class MaterialViews(db):
 
-    def insert_gene_ref(self, file_genes):
-        num_lines = sum(1 for line in open(file_genes))
+    def __init__(self, file_db_name, host, username, password):
+        name = open(file_db_name).read().replace("\n", "")
+        super(MaterialViews, self).__init__('mysql', 'pymysql', host, username, password)
+        self.database = name
         self.connect_to_db(self.database)
-        self.connection.execute('DELETE FROM gene;')
-        row = 1
-        with open(file_genes) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                items = line.split(';')
-                try:
-                    if len(items) < 3:
-                        self.connection.execute("INSERT INTO gene (ensg) VALUES ('{ensg}')".format(
-                            ensg=items[0]
-                        ))
-                    else:
-                        self.connection.execute("INSERT INTO gene (ensg, symbol, description) VALUES (%s, %s, %s)",
-                                                [items[0], items[2], items[1]]
-                        )
-                    print("Inserted gene: {gene} | {line}/{lines}".format(
-                        gene=items[0],
-                        line=row,
-                        lines=num_lines
-                    ))
-                    row += 1
-                except:
-                    print('!!! Error adding: {}'.format(items[0]))
-                    time.sleep(5)
-        print('--- All genes inserted! ---')
-        self.connection.close()
 
-    def insert_group_ref(self, file_groups, output):
-        num_lines = sum(1 for line in open(file_groups))
-        self.connect_to_db(self.database)
-        self.connection.execute('DELETE FROM stage;')
-        row = 1
-        with open(file_groups) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                self.connection.execute("INSERT INTO stage (name) VALUES ('{name}')".format(
-                    name=line
-                ))
-                print("Inserted group: {name} | {line}/{lines}".format(
-                    name=line,
-                    line=row,
-                    lines=num_lines
-                ))
-                row += 1
-        result = self.connection.execute("SELECT * FROM stage").fetchall()
-        with open(output, 'w') as f:
+    def run_mv_transcript(self, file_output):
+        self.connection.execute("DELETE FROM transcript_mv")
+        result = self.connection.execute("SELECT id FROM tissue")
+        tissues = [item for item in result]
+        for tissue in tissues:
+            tissue_id = tissue[0]
+            query = "SELECT  gene, tissue, avg(count), avg(CPM) from transcript as t "
+            query += "LEFT JOIN gene as g on g.id = t.gene "
+            query += "WHERE t.tissue = {tissue} ".format(tissue=tissue_id)
+            query += "AND g.symbol IS NOT NULL "
+            query += "GROUP BY g.id "
+            query += "ORDER BY avg(t.CPM) DESC "
+            query += "LIMIT 100 "
+            result = self.connection.execute(query)
             for item in result:
-                f.write(",".join(str(column) for column in item)+"\n")
-        print('--- All groups inserted! ---')
+                query = "INSERT INTO transcript_mv (gene, tissue, count_avg, CPM_avg) "
+                query += "VALUES ({x[0]}, {x[1]}, {x[2]}, {x[3]})".format(x=list(item))
+                self.connection.execute(query)
         self.connection.close()
-
-    def insert_tissue_ref(self, file_tissues, output):
-        num_lines = sum(1 for line in open(file_tissues))
-        self.connect_to_db(self.database)
-        self.connection.execute('DELETE FROM tissue;')
-        row = 1
-        with open(file_tissues) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                self.connection.execute("INSERT INTO tissue (name) VALUES ('{name}')".format(
-                    name=line
-                ))
-                print("Inserted tissue: {name} | {line}/{lines}".format(
-                    name=line,
-                    line=row,
-                    lines=num_lines
-                ))
-                row += 1
-        result = self.connection.execute("SELECT * FROM tissue").fetchall()
-        with open(output, 'w') as f:
-            for item in result:
-                f.write(",".join(str(column) for column in item)+"\n")
-        print('--- All tissues inserted! ---')
-        self.connection.close()
-
-    def prepare_data(self, stage_file, tissue_file):
-        stages = {}
-        tissues = {}
-        with open(stage_file) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                line = line.split(',')
-                stages[line[4]] = line[0]
-        f.close()
-        with open(tissue_file) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                line = line.split(',')
-                tissues[line[4]] = line[0]
-        f.close()
-        return stages, tissues
-
-    def insert_expression(self, file_expressions, stage_file, tissue_file):
-        row = 1
-        print('Preparing....')
-        num_lines = sum(1 for line in open(file_expressions))
-        stages, tissues = self.prepare_data(stage_file,tissue_file )
-        self.connect_to_db(self.database)
-        self.connection.execute('DELETE FROM transcript;')
-        with open(file_expressions) as f:
-            for line in f:
-                line = line.replace('\n', '').replace('\r', '')
-                items = line.split(';')
-                result = self.connection.execute("SELECT id FROM gene WHERE ensg = '{gname}'".format(gname=items[0]))
-                try:
-                    self.connection.execute("INSERT INTO transcript (gene, stage, tissue, count, sex, CPM ) VALUES "
-                                            "('{gene}', '{stage}', '{tissue}', '{count}', '{sex}', '{CPM}')".format(
-                                                gene=[item[0] for item in result][0],
-                                                stage=stages[items[2]], tissue=tissues[items[1]],
-                                                count=items[4], CPM=items[3], sex=items[5]
-                    ))
-                    print("Inserted gene count: {gene} | {line}/{lines}".format(
-                        gene=items[0],
-                        line=row,
-                        lines=num_lines
-                    ))
-                    row += 1
-                except Exception as e:
-                    print('!!! Error adding count: {}'.format(items[0]))
-                    print(e)
-        print('--- All counts inserted! ---')
-        self.connection.close()
+        with open(file_output, 'w') as f:
+            f.write('created')
 
 
-if __name__ == '__main__':
-
-    try:
-        arg = sys.argv
-        db_name_file = arg[1]
-        db_host = arg[2]
-        db_username = arg[3]
-        db_password = arg[4]
-        file_genes = arg[5]
-        file_tissues = arg[6]
-        file_groups = arg[7]
-        file_expressions = arg[8]
-        output_inserted = arg[9]
-        output_stage = arg[10]
-        output_tissue = arg[11]
-
-        print(open(file_tissues).read())
-        db_name = open(db_name_file).read().replace("\n", "")
-        seeder = Seeder('mysql', 'pymysql', db_host, db_username, db_password, db_name)
-        seeder.insert_gene_ref(file_genes)
-        seeder.insert_group_ref(file_groups, output_stage)
-        seeder.insert_tissue_ref(file_tissues, output_tissue)
-        seeder.insert_expression(file_expressions, output_stage, output_tissue)
-
-        with open(output_inserted, 'w') as f:
-            f.write("all records are inserted to the db")
-    except Exception as a:
-        print(a)
-
+arg = sys.argv
+mv = MaterialViews(arg[1], arg[2], arg[3], arg[4])
+mv.run_mv_transcript(arg[5])
