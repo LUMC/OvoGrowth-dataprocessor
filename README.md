@@ -43,7 +43,7 @@ DB_USERNAME: user
 DB_PASSWORD: password
 ```
 
-##Execution
+## Execution
 When everything is configured, the pipeline can be executing using the following
 command:
 ```shell script
