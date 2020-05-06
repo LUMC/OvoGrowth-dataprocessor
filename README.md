@@ -1,7 +1,7 @@
 # KeyGenes data processor
 
 A Snakemake based workflow to fetch data from multiple batch-RNA 
-datasets and submit them to a MySQL-database. 
+datasets and submit it to a MySQL-database. 
 
 ## Requirements
 
