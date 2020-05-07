@@ -95,7 +95,7 @@ rule create_database:
         "Creating the working database"
     log:
         "{output_dir}/logs/create_db.txt"
-    run:
+    shell:
         """python3 scripts/create_db.py {db_host} {db_username} {db_password} {output} &> {log}"""
 
 rule init_db_schema:
