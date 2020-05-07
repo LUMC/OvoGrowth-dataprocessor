@@ -1,4 +1,4 @@
-from helpers.db import db
+from helpers.Database import db
 import sys
 
 arg = sys.argv
