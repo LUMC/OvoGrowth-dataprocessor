@@ -113,7 +113,8 @@ CREATE TABLE `transcript_mv` (
   `tissue` int(11) NOT NULL,
   `count_avg` decimal(10,2) NOT NULL,
   `CPM_avg` decimal(10,2) NOT NULL,
-  UNIQUE KEY `product` (`gene`,`tissue`),
+  `adult_only` boolean,
+  UNIQUE KEY `product` (`gene`,`tissue`, `adult_only`),
   INDEX (CPM_avg)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
