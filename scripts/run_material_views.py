@@ -42,8 +42,8 @@ class MaterialViews(db):
                 query += "ORDER BY avg(t.CPM) DESC "
                 query += "LIMIT 100 "
                 result = self.connection.execute(query)
-                print(len([item for item in result]))
-                for item in [item for item in result]:
+                for item in result:
+                    print(item)
                     query = "INSERT INTO transcript_mv (gene, tissue, count_avg, CPM_avg, adult_only) "
                     query += "VALUES ({x[0]}, {x[1]}, {x[2]}, {x[3]}, {group})".format(x=list(item), group=req)
                     self.connection.execute(query)
