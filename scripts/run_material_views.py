@@ -47,6 +47,7 @@ class MaterialViews(db):
                 for item in result:
                     query = "INSERT INTO transcript_mv (gene, tissue, count_avg, CPM_avg, adult_only) "
                     query += "VALUES ({x[0]}, {x[1]}, {x[2]}, {x[3]}, {group})".format(x=list(item), group=req)
+                    print(query)
                     self.connection.execute(query)
         self.connection.close()
         with open(file_output, 'w') as f:

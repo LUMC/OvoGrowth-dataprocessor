@@ -1,3 +1,0 @@
-KeyError in line 8 of /home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile:
-'output_folder'
-  File "/home/ddhoogduin/programs/KeyGenes-dataprocessor-v0.2/Snakefile", line 8, in <module>
