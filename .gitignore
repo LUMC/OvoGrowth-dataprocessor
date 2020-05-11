@@ -6,3 +6,4 @@ logs/
 .snakemake/
 __pycache__/
 .idea/
+.snakemake/
