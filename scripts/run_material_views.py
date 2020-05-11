@@ -16,7 +16,7 @@ class MaterialViews(db):
         if tag == 'adult':
             return "AND t.stage = "+adult_id, 1
         if tag == 'fetal':
-            return "AND t.stage = "+adult_id, 0
+            return "AND t.stage != "+adult_id, 0
         if tag == 'all':
             return '', 'NULL'
 
@@ -28,8 +28,10 @@ class MaterialViews(db):
         adult_id = [item[0] for item in result][0]
         groups = ["adult", "fetal", "all"]
         for group in groups:
+            print(group, "---")
             q_addition, req = self.get_mv_group_settings(group, adult_id)
             for tissue in tissues:
+                print(tissue[0], "---")
                 tissue_id = tissue[0]
                 query = "SELECT  gene, tissue, avg(count), avg(CPM) from transcript as t "
                 query += "LEFT JOIN gene as g on g.id = t.gene "
@@ -39,7 +41,9 @@ class MaterialViews(db):
                 query += " GROUP BY g.id "
                 query += "ORDER BY avg(t.CPM) DESC "
                 query += "LIMIT 100 "
+                print(query)
                 result = self.connection.execute(query)
+                print(len([item for item in result]))
                 for item in result:
                     query = "INSERT INTO transcript_mv (gene, tissue, count_avg, CPM_avg, adult_only) "
                     query += "VALUES ({x[0]}, {x[1]}, {x[2]}, {x[3]}, {group})".format(x=list(item), group=req)
