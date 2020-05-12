@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `gene`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `gene` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `status` varchar(20) DEFAULT 'draft',
+  `status` varchar(20) DEFAULT 'published',
   `sort` int(10) unsigned DEFAULT NULL,
   `created_by` int(10) unsigned DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS `stage`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stage` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `status` varchar(20) DEFAULT 'draft',
+  `status` varchar(20) DEFAULT 'published',
   `created_by` int(10) unsigned DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `name` varchar(200) DEFAULT NULL,
@@ -67,7 +67,7 @@ DROP TABLE IF EXISTS `tissue`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tissue` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `status` varchar(20) DEFAULT 'draft',
+  `status` varchar(20) DEFAULT 'published',
   `created_by` int(10) unsigned DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `name` varchar(200) DEFAULT NULL,
@@ -85,7 +85,7 @@ DROP TABLE IF EXISTS `transcript`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `transcript` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `status` varchar(20) DEFAULT 'draft',
+  `status` varchar(20) DEFAULT 'published',
   `created_by` int(10) unsigned DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
   `tissue` int(10) unsigned DEFAULT NULL,
