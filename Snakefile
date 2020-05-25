@@ -68,6 +68,24 @@ rule insert_cells:
         """ {input.db} {db_host} {db_username} {db_password} {input.cells}"""
         """ {output.db} """
         """ &> {log}"""
+
+rule insert_expression:
+    input:
+         db="{output_dir}/database/name.txt",
+         schema="{output_dir}/database/schema.txt",
+         gene_db="{output_dir}/database/inserted_cells.txt",
+         cell_db="{output_dir}/database/inserted_cells.txt",
+         cells=input_file_counts,
+    output:
+         db="{output_dir}/database/inserted_expression.txt"
+    log:
+        "{output_dir}/logs/inserted_expression.txt"
+    shell:
+        """python3 scripts/insert_expression_to_database.py"""
+        """ {input.db} {db_host} {db_username} {db_password} {input.cells}"""
+        """ {output.db} """
+        """ &> {log}"""
+
 # rule create_CPM:
 #     input:
 #          "input/{file_name}.txt"
