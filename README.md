@@ -8,7 +8,6 @@ datasets and submit it to a MySQL-database.
 The pipeline requires programs to installed: 
 - MySQL (^8.0)
 - Python (^3.5)
-- R (^3.5)
 
 ## Installation
 
@@ -22,9 +21,6 @@ The python-based requirement can be installed by using:
 ```shell script
 pip3 install -r requirements.txt
 ```
-
-Atlast, the R-based library **EdgeR** is required; [click](https://bioconductor.org/packages/release/bioc/html/edgeR.html) here for installation
-instructions. 
 ## Instructions
 
 The workflow strictly relies on the settings of a configuration file. All parameters all required. The DB
@@ -34,9 +30,9 @@ The output folder will contain all the pipeline results.
 
 The config file is typically a **yaml (.yml)** file and is not restricted to a specific naming. 
 ```yaml
-input:
-  - training_adult.txt
-  - training_fetal.txt
+input_genes: genes.tsv
+input_cluster: cluster.tsv
+input_counts:  counts.tsv
 output_dir: output
 DB_HOST: localhost
 DB_USERNAME: user

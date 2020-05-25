@@ -10,21 +10,6 @@ Configuration
 
 STEPS:
 
-1: Create normalized dataset based on samples (optional) *
-
-2: Calculate sex based on specific genes *
-
-3: Read files > reformat for gene and raw counts/nrml counts > create formatted file *
-
-4: Get query gene reference data > write to file *
-
-5: Initialise working database *
-
-6: Insert gene refs to the database =
-	-> Correct if deprecated! *
-
-7: Insert expression tot the database *
-
-8: Run material views *
-
-9: Export database tables to .sql file 
+1. Get unique gene symbols add submit them to the database
+2. Insert cells to database
+3. Insert transcription to database

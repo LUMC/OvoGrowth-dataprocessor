@@ -1,7 +1,0 @@
-input:
-  - training_adult.txt
-  - training_fetal.txt
-output_dir: output
-DB_HOST: localhost
-DB_USERNAME: root
-DB_PASSWORD: secret
