@@ -6,19 +6,25 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
     DB = db(dialect, driver, host, username, password)
     DB.connect_to_db(database)
     with open(gene_file) as f:
+        gene_values = ""
+        n=0
         for line in f:
             [ensg, symbol] = line.replace('\n', '').split('\t')
-            record = DB.connection.execute("SELECT id FROM gene where symbol = '{symbol}'".format(symbol=symbol))\
-                .fetchone()
-            if record:
-                DB.connection.execute("INSERT INTO gene_origin (gene, ensg) VALUES ('{id}', '{ensg}')"
-                                      .format(id=str(record[0]), ensg=ensg))
-            else:
-                DB.connection.execute("INSERT INTO gene (symbol) VALUES ('{symbol}')"
-                                                .format(symbol=symbol))
-                gene_id = DB.connection.execute("SELECT LAST_INSERT_ID()").fetchone()
-                DB.connection.execute("INSERT INTO gene_origin (gene, ensg) VALUES ('{id}', '{ensg}')"
-                                      .format(id=str(gene_id[0]), ensg=ensg))
+            gene_values += "{next}('{symbol}')".format(next=(", " if n > 0 else ""),symbol=symbol)
+            n=+1
+        DB.connection.execute("INSERT IGNORE INTO gene (symbol) VALUES {values}"
+                  .format(values=gene_values))
+    with open(gene_file) as f:
+        gene_origin_values = ""
+        n=0
+        for line in f:
+            [ensg, symbol] = line.replace('\n', '').split('\t')
+            gene_id = DB.connection.execute("select id from gene where symbol = '{symbol}'".format(symbol=symbol))\
+                .fetchone()[0]
+            gene_origin_values += "{next}('{gene}', '{ensg}')".format(next=(", " if n > 0 else ""), gene=gene_id, ensg=ensg)
+            n=+1
+        DB.connection.execute("INSERT IGNORE INTO gene_origin (gene, ensg) VALUES {values}"
+                  .format(values=gene_origin_values))
     DB.connection.close()
 
 if __name__ == '__main__':

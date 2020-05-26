@@ -32,7 +32,7 @@ CREATE TABLE `gene` (
   `description` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `symbol` (`symbol`),
-  INDEX (symbol)
+  INDEX `symbol_index` (`symbol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,7 +68,8 @@ CREATE TABLE `cell` (
   `tsne_2` float(15,10) NOT NULL,
   `sample_id` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `cell_marker` (`cell_marker`)
+  UNIQUE KEY `cell_marker` (`cell_marker`),
+  INDEX `cell_marker_index` (`cell_marker`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -84,9 +85,10 @@ CREATE TABLE `expression` (
   `created_on` datetime DEFAULT NULL,
   `gene` int(10) unsigned NOT NULL,
   `cell` int(10) unsigned NOT NULL,
-  `CPM` float(11,3) DEFAULT NULL,
+  `CPM` float(15,5) DEFAULT NULL,
   PRIMARY KEY (`gene`, `cell`),
-  KEY `gene_index` (`gene`)
+  KEY `gene_index` (`gene`),
+  KEY `cell_index` (`cell`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

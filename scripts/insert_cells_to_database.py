@@ -5,22 +5,25 @@ from helpers.Database import db
 def insert_cells_to_db(dialect, driver, host, username, password, database, cells_file):
     DB = db(dialect, driver, host, username, password)
     DB.connect_to_db(database)
-    n=0
+    n = 0
     with open(cells_file) as f:
+        values = ""
         for line in f:
             n += 1
-            if n < 2:
+            if n == 1:
                 continue
             [cell_marker, cluster_id, tsne_1, tsne_2, sample_id] = line.replace('\n', '').split('\t')
-            DB.connection.execute("INSERT INTO cell (cell_marker, cluster_id, tsne_1, tsne_2, sample_id)"
-                                  "VALUES ('{cell_marker}', '{cluster_id}', '{tsne_1}', '{tsne_2}', '{sample_id}')"
-                .format(
+            values += "{next}('{cell_marker}', '{cluster_id}', '{tsne_1}', '{tsne_2}', '{sample_id}')".format(
+                next=(", " if n != 2 else ""),
                 cell_marker=cell_marker,
                 cluster_id=cluster_id,
                 tsne_1=tsne_1,
                 tsne_2=tsne_2,
                 sample_id=sample_id
-            ))
+            )
+
+        DB.connection.execute("INSERT INTO cell (cell_marker, cluster_id, tsne_1, tsne_2, sample_id)"
+                              " VALUES {values}".format(values=values))
     DB.connection.close()
 
 
