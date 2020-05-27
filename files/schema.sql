@@ -86,7 +86,6 @@ CREATE TABLE `expression` (
   `gene` int(10) unsigned NOT NULL,
   `cell` int(10) unsigned NOT NULL,
   `CPM` float(15,5) DEFAULT NULL,
-  PRIMARY KEY (`gene`, `cell`),
   KEY `gene_index` (`gene`),
   KEY `cell_index` (`cell`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

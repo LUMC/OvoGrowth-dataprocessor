@@ -10,6 +10,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         n=0
         for line in f:
             [ensg, symbol] = line.replace('\n', '').split('\t')
+            symbol = symbol.split(".")[0]
             gene_values += "{next}('{symbol}')".format(next=(", " if n > 0 else ""),symbol=symbol)
             n=+1
         DB.connection.execute("INSERT IGNORE INTO gene (symbol) VALUES {values}"
@@ -19,6 +20,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         n=0
         for line in f:
             [ensg, symbol] = line.replace('\n', '').split('\t')
+            symbol = symbol.split(".")[0]
             gene_id = DB.connection.execute("select id from gene where symbol = '{symbol}'".format(symbol=symbol))\
                 .fetchone()[0]
             gene_origin_values += "{next}('{gene}', '{ensg}')".format(next=(", " if n > 0 else ""), gene=gene_id, ensg=ensg)
