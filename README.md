@@ -1,6 +1,6 @@
 # OvoGrowth data processor
 
-A Snakemake based workflow to fetch data from multiple batch-RNA 
+A Snakemake based workflow to fetch data from multiple sc-RNA 
 datasets and submit it to a MySQL-database. 
 
 ## Requirements
