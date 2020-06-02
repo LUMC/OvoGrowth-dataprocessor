@@ -1,5 +1,5 @@
-mygene==3.1.0
-pandas==1.0.3
-sqlalchemy==1.3.16
-PyMySQL==0.9.3
+mygene
+pandas
+sqlalchemy
+PyMySQL
 snakemake
