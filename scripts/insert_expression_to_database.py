@@ -14,6 +14,7 @@ def get_cell_ids(cell_markers, DB):
 def insert_expression_to_db(dialect, driver, host, username, password, database, expression_file):
     DB = db(dialect, driver, host, username, password)
     DB.connect_to_db(database)
+    DB.connection.execute('ALTER TABLE `expression` DISABLE KEYS')
     with open(expression_file) as f:
         line_n = 0
         for line in f:
@@ -34,7 +35,7 @@ def insert_expression_to_db(dialect, driver, host, username, password, database,
                 values +="{next}('{gene}', '{cell}', '{CPM}')"\
                     .format(gene=gene_id[0], cell=cell_markers[i], CPM=line_items[i], next=(", " if i > 0 else ""))
             DB.connection.execute("INSERT INTO expression (gene, cell, CPM) VALUES {values}".format(values=values))
-
+    DB.connection.execute('ALTER TABLE `expression` ENABLE KEYS')
     DB.connection.close()
 
 if __name__ == '__main__':
