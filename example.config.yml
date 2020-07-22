@@ -1,7 +1,9 @@
-input_genes: input/sample_genes.tsv
-input_cluster: input/sample/cell_2_cluster_tsne.tsv
-input_counts:  input/normalized_counts.tsv
 output_dir: output
 DB_HOST: localhost
+DB_NAME: x
 DB_USERNAME: worker
 DB_PASSWORD: pass
+
+append_datasets: 0/1
+files_dataset:
+  - input/Example
