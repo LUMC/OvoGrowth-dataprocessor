@@ -32,14 +32,13 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
 if __name__ == '__main__':
     try:
         arg = sys.argv
-        db_name_file = arg[1]
+        db_name = arg[1]
         db_host = arg[2]
         db_username = arg[3]
         db_password = arg[4]
         file_genes = arg[5]
         output = arg[6]
 
-        db_name = open(db_name_file).read().replace("\n", "")
         insert_genes_to_db('mysql', 'pymysql', db_host, db_username, db_password, db_name, file_genes)
         with open(output, 'w') as f:
             f.write("all records are inserted to the db")

@@ -69,6 +69,7 @@ DROP TABLE IF EXISTS `cell`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cell` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `dataset` int(10) NOT NULL,
   `status` varchar(20) DEFAULT 'published',
   `created_by` int(10) unsigned DEFAULT NULL,
   `created_on` datetime DEFAULT NULL,
@@ -78,7 +79,7 @@ CREATE TABLE `cell` (
   `tsne_2` float(15,10) NOT NULL,
   `sample_id` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `cell_marker` (`cell_marker`),
+  UNIQUE KEY `cell_marker` (`cell_marker`, `dataset`),
   INDEX `cell_marker_index` (`cell_marker`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

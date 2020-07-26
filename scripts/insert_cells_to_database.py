@@ -2,7 +2,7 @@ import time, sys
 from helpers.Database import db
 
 
-def insert_cells_to_db(dialect, driver, host, username, password, database, cells_file):
+def insert_cells_to_db(dialect, driver, host, username, password, database, cells_file, reference_id):
     DB = db(dialect, driver, host, username, password)
     DB.connect_to_db(database)
     n = 0
@@ -13,8 +13,10 @@ def insert_cells_to_db(dialect, driver, host, username, password, database, cell
             if n == 1:
                 continue
             [cell_marker, cluster_id, tsne_1, tsne_2, sample_id] = line.replace('\n', '').split('\t')
-            values += "{next}('{cell_marker}', '{cluster_id}', '{tsne_1}', '{tsne_2}', '{sample_id}')".format(
+            values += "{next}('{dataset}', '{cell_marker}', " \
+                      "'{cluster_id}', '{tsne_1}', '{tsne_2}', '{sample_id}')".format(
                 next=(", " if n != 2 else ""),
+                dataset=reference_id,
                 cell_marker=cell_marker,
                 cluster_id=cluster_id,
                 tsne_1=tsne_1,
@@ -22,7 +24,7 @@ def insert_cells_to_db(dialect, driver, host, username, password, database, cell
                 sample_id=sample_id
             )
 
-        DB.connection.execute("INSERT INTO cell (cell_marker, cluster_id, tsne_1, tsne_2, sample_id)"
+        DB.connection.execute("INSERT INTO cell (dataset, cell_marker, cluster_id, tsne_1, tsne_2, sample_id)"
                               " VALUES {values}".format(values=values))
     DB.connection.close()
 
@@ -30,14 +32,16 @@ def insert_cells_to_db(dialect, driver, host, username, password, database, cell
 if __name__ == '__main__':
     try:
         arg = sys.argv
-        db_name_file = arg[1]
+        db_name = arg[1]
         db_host = arg[2]
         db_username = arg[3]
         db_password = arg[4]
         file_cells = arg[5]
-        output = arg[6]
-        db_name = open(db_name_file).read().replace("\n", "")
-        insert_cells_to_db('mysql', 'pymysql', db_host, db_username, db_password, db_name, file_cells)
+        reference_file = arg[6]
+        output = arg[7]
+
+        reference_id = open(reference_file).read().replace("\n", "")
+        insert_cells_to_db('mysql', 'pymysql', db_host, db_username, db_password, db_name, file_cells, reference_id)
         with open(output, 'w') as f:
             f.write("all records are inserted to the db")
     except Exception as a:

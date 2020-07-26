@@ -4,7 +4,6 @@ import string
 from scripts.helpers.Database import db
 
 # Config section
-files_dataset = config['files_dataset']
 dataset_names = config['dataset_names']
 append_datasets = config['append_datasets']
 
@@ -20,7 +19,7 @@ def validate_input(files_dataset, required_files, output, logfile):
     log = ""
     for file_set in files_dataset:
         for rfile in required_files:
-            if (not path.exists(file_set + "/" + rfile)):
+            if (not path.exists("input/"+ file_set + "/" + rfile)):
                 failed = True
                 log += file_set + "/" + rfile + " is required but missing\n"
     if not failed:
@@ -30,21 +29,19 @@ def validate_input(files_dataset, required_files, output, logfile):
 
 rule all:
     input:
-         expand("{output_dir}/database/{dataset}/id.txt",
+         expand("{output_dir}/database/{dataset}/inserted_expression.txt",
                 output_dir=output_dir, dataset=dataset_names)
 # Rule section
-
 rule validate_input:
     log:
        "{output_dir}/logs/validate_input.txt"
     output:
           "{output_dir}/validate_input.txt"
     params:
-          files_dataset=files_dataset,
+          files_dataset=dataset_names,
           required_files=["count_matrix.tsv", "genes.tsv", "cell_cluster.tsv"]
     run:
         validate_input(params.files_dataset, params.required_files, output, log)
-
 
 
 rule init_db_schema:
@@ -80,47 +77,46 @@ rule prepare_dataset:
 
 rule insert_genes:
     input:
-         db="{output_dir}/database/name.txt",
          schema="{output_dir}/database/schema.txt",
-         genes=input_file_genes,
+         genes="input/{dataset}/genes.tsv",
     output:
-         db="{output_dir}/database/inserted_genes.txt"
+         db="{output_dir}/database/{dataset}/inserted_genes.txt"
     log:
-        "{output_dir}/logs/inserted_genes.txt"
+        "{output_dir}/logs/{dataset}/inserted_genes.txt"
     shell:
         """python3 scripts/insert_genes_to_database.py"""
-        """ {input.db} {db_host} {db_username} {db_password} {input.genes}"""
+        """ {db_name} {db_host} {db_username} {db_password} {input.genes}"""
         """ {output.db} """
         """ &> {log}"""
 
 rule insert_cells:
     input:
-         db="{output_dir}/database/name.txt",
+         reference_file="{output_dir}/database/{dataset}/id.txt",
          schema="{output_dir}/database/schema.txt",
-         cells=input_file_cluster,
+         cells="input/{dataset}/cell_cluster.tsv",
     output:
-         db="{output_dir}/database/inserted_cells.txt"
+         db="{output_dir}/database/{dataset}/inserted_cells.txt"
     log:
-        "{output_dir}/logs/inserted_cells.txt"
+        "{output_dir}/logs/{dataset}/inserted_cells.txt"
     shell:
         """python3 scripts/insert_cells_to_database.py"""
-        """ {input.db} {db_host} {db_username} {db_password} {input.cells}"""
+        """ {db_name} {db_host} {db_username} {db_password} {input.cells} {input.reference_file}"""
         """ {output.db} """
         """ &> {log}"""
 
 rule insert_expression:
     input:
-         db="{output_dir}/database/name.txt",
+         reference_file="{output_dir}/database/{dataset}/id.txt",
          schema="{output_dir}/database/schema.txt",
-         gene_db="{output_dir}/database/inserted_genes.txt",
-         cell_db="{output_dir}/database/inserted_cells.txt",
-         cells=input_file_counts,
+         cell_db="{output_dir}/database/{dataset}/inserted_cells.txt",
+         gene_db="{output_dir}/database/{dataset}/inserted_genes.txt",
+         expression="input/{dataset}/count_matrix.tsv",
     output:
-         db="{output_dir}/database/inserted_expression.txt"
+         db="{output_dir}/database/{dataset}/inserted_expression.txt"
     log:
-        "{output_dir}/logs/inserted_expression.txt"
+        "{output_dir}/logs/{dataset}/inserted_expression.txt"
     shell:
         """python3 scripts/insert_expression_to_database.py"""
-        """ {input.db} {db_host} {db_username} {db_password} {input.cells}"""
+        """ {db_name} {db_host} {db_username} {db_password} {input.expression} {input.reference_file}"""
         """ {output.db} """
         """ &> {log}"""
