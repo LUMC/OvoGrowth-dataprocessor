@@ -30,13 +30,16 @@ The output folder will contain all the pipeline results.
 
 The config file is typically a **yaml (.yml)** file and is not restricted to a specific naming. 
 ```yaml
-input_genes: genes.tsv
-input_cluster: cluster.tsv
-input_counts:  counts.tsv
 output_dir: output
 DB_HOST: localhost
-DB_USERNAME: user
-DB_PASSWORD: password
+DB_NAME: x
+DB_USERNAME: worker
+DB_PASSWORD: pass
+
+append_datasets: 0/1
+files_dataset:
+  - input/Example
+  - input/Example2
 ```
 
 ## Execution
