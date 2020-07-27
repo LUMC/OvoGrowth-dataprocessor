@@ -42,6 +42,14 @@ files_dataset:
   - input/Example2
 ```
 
+All input data folders are required to have following files
+
+- **cell_cluster.tsv**: Containing the marker id and tsne coordinates
+
+- **genes.tsv**: All genes that are present in the count matrix; ensg, gene symbol 
+
+- **count_matrix.tsv**: Expression matrix of genes and cells 
+
 ## Execution
 When everything is configured, the pipeline can be executing using the following
 command:
