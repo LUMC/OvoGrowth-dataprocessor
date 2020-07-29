@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.18, for Linux (x86_64)
 --
--- Host: localhost    Database: keygenes2
+
 -- ------------------------------------------------------
 -- Server version	8.0.18
 
@@ -77,7 +77,6 @@ CREATE TABLE `cell` (
   `cluster_id` int(10) NOT NULL,
   `tsne_1` float(15,10) NOT NULL,
   `tsne_2` float(15,10) NOT NULL,
-  `sample_id` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cell_marker` (`cell_marker`, `dataset`),
   INDEX `cell_marker_index` (`cell_marker`)

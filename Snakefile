@@ -40,6 +40,7 @@ rule validate_input:
     params:
           files_dataset=dataset_names,
           required_files=["count_matrix.tsv", "genes.tsv", "cell_cluster.tsv"]
+    threads: 8
     run:
         validate_input(params.files_dataset, params.required_files, output, log)
 
@@ -54,6 +55,7 @@ rule init_db_schema:
           "{output_dir}/database/schema.txt"
     log:
         "{output_dir}/logs/init_db_schema.txt"
+    threads: 8
     run:
         if int(params.append_datasets) == 0:
             shell("""bash scripts/init_db_schema.sh {db_username} {db_password}"""
@@ -69,6 +71,7 @@ rule prepare_dataset:
         "{output_dir}/database/{dataset}/id.txt"
     log:
         "{output_dir}/logs/{dataset}/prepare_dataset.txt"
+    threads: 8
     shell:
         """python3 scripts/insert_dataset_to_database.py"""
         """ {db_name} {db_host} {db_username} {db_password} {wildcards.dataset}"""
@@ -83,6 +86,7 @@ rule insert_genes:
          db="{output_dir}/database/{dataset}/inserted_genes.txt"
     log:
         "{output_dir}/logs/{dataset}/inserted_genes.txt"
+    threads: 1
     shell:
         """python3 scripts/insert_genes_to_database.py"""
         """ {db_name} {db_host} {db_username} {db_password} {input.genes}"""
@@ -98,6 +102,7 @@ rule insert_cells:
          db="{output_dir}/database/{dataset}/inserted_cells.txt"
     log:
         "{output_dir}/logs/{dataset}/inserted_cells.txt"
+    threads: 8
     shell:
         """python3 scripts/insert_cells_to_database.py"""
         """ {db_name} {db_host} {db_username} {db_password} {input.cells} {input.reference_file}"""
@@ -115,6 +120,7 @@ rule insert_expression:
          db="{output_dir}/database/{dataset}/inserted_expression.txt"
     log:
         "{output_dir}/logs/{dataset}/inserted_expression.txt"
+    threads: 8
     shell:
         """python3 scripts/insert_expression_to_database.py"""
         """ {db_name} {db_host} {db_username} {db_password} {input.expression} {input.reference_file}"""

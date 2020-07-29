@@ -12,19 +12,19 @@ def insert_cells_to_db(dialect, driver, host, username, password, database, cell
             n += 1
             if n == 1:
                 continue
-            [cell_marker, cluster_id, tsne_1, tsne_2, sample_id] = line.replace('\n', '').split('\t')
+            [cell_marker, cluster_id, tsne_1, tsne_2] = line.replace('\n', '').split('\t')
+            print(cell_marker, cluster_id, tsne_1, tsne_2)
             values += "{next}('{dataset}', '{cell_marker}', " \
-                      "'{cluster_id}', '{tsne_1}', '{tsne_2}', '{sample_id}')".format(
+                      "'{cluster_id}', '{tsne_1}', '{tsne_2}')".format(
                 next=(", " if n != 2 else ""),
                 dataset=reference_id,
                 cell_marker=cell_marker,
                 cluster_id=cluster_id,
-                tsne_1=tsne_1,
-                tsne_2=tsne_2,
-                sample_id=sample_id
+                tsne_1=float(tsne_1),
+                tsne_2=float(tsne_2)
             )
 
-        DB.connection.execute("INSERT INTO cell (dataset, cell_marker, cluster_id, tsne_1, tsne_2, sample_id)"
+        DB.connection.execute("INSERT INTO cell (dataset, cell_marker, cluster_id, tsne_1, tsne_2)"
                               " VALUES {values}".format(values=values))
     DB.connection.close()
 

@@ -5,5 +5,5 @@ DB_USERNAME: worker
 DB_PASSWORD: pass
 
 append_datasets: 0/1
-files_dataset:
-  - input/Example
+dataset_names:
+  - Example

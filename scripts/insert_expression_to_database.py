@@ -20,12 +20,12 @@ def insert_expression_to_db(dialect, driver, host, username, password, database,
         for line in f:
             line_n+=1
             if line_n == 1:
-                items = line.replace('\n', '').split("\t")
+                items = line.replace('\n', '').replace('"', '').split("\t")
                 items.pop(0)
                 cell_markers = get_cell_ids(items, reference_id, DB)
                 continue
             line_items = line.replace('\n', '').split("\t")
-            gene_symbol = line_items[0].split(".")[0]
+            gene_symbol = line_items[0].split(".")[0].replace('"', '')
             line_items.pop(0)
             gene_id = DB.connection.execute("select id from gene where symbol = '{gene}'"
                                             .format(gene=gene_symbol)).fetchone()
