@@ -1,10 +1,8 @@
 from os import path
-import random
-import string
-from scripts.helpers.Database import db
 
 # Config section
 dataset_names = config['dataset_names']
+dataset_name_string = ",".join(dataset_names)
 append_datasets = config['append_datasets']
 
 output_dir = config['output_dir']
@@ -29,8 +27,10 @@ def validate_input(files_dataset, required_files, output, logfile):
 
 rule all:
     input:
-         expand("{output_dir}/database/{dataset}/inserted_expression.txt",
+        expand("{output_dir}/database/inserted_genes.txt", output_dir=output_dir),
+        expand("{output_dir}/database/{dataset}/inserted_expression.txt",
                 output_dir=output_dir, dataset=dataset_names)
+
 # Rule section
 rule validate_input:
     log:
@@ -78,15 +78,33 @@ rule prepare_dataset:
         """ {output} """
         """ &> {log}"""
 
+
+rule merge_genes:
+    output:
+        "{output_dir}/genes.tsv"
+    log:
+        "{output_dir}/logs/genes.txt"
+    shell: """bash scripts/merge_genes.sh {dataset_name_string} {output} &> {log}"""
+
+
+rule get_gene_description:
+    input:
+        "{output_dir}/genes.tsv"
+    output:
+        "{output_dir}/genes_complete.tsv"
+    log:
+        "{output_dir}/logs/genes_complete.txt"
+    shell: """python3 scripts/get_gene_description.py {input} {output} &> {log}"""
+
 rule insert_genes:
     input:
          schema="{output_dir}/database/schema.txt",
-         genes="input/{dataset}/genes.tsv",
+         genes="{output_dir}/genes_complete.tsv",
     output:
-         db="{output_dir}/database/{dataset}/inserted_genes.txt"
+         db="{output_dir}/database/inserted_genes.txt"
     log:
-        "{output_dir}/logs/{dataset}/inserted_genes.txt"
-    threads: 1
+        "{output_dir}/logs/inserted_genes.txt"
+    threads: 8
     shell:
         """python3 scripts/insert_genes_to_database.py"""
         """ {db_name} {db_host} {db_username} {db_password} {input.genes}"""
@@ -114,7 +132,7 @@ rule insert_expression:
          reference_file="{output_dir}/database/{dataset}/id.txt",
          schema="{output_dir}/database/schema.txt",
          cell_db="{output_dir}/database/{dataset}/inserted_cells.txt",
-         gene_db="{output_dir}/database/{dataset}/inserted_genes.txt",
+         gene_db="{output_dir}/database/inserted_genes.txt",
          expression="input/{dataset}/count_matrix.tsv",
     output:
          db="{output_dir}/database/{dataset}/inserted_expression.txt"

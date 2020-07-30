@@ -5,6 +5,7 @@ from helpers.Database import db
 def get_cell_ids(cell_markers, reference_id, DB):
     cell_ids = []
     for cell_marker in cell_markers:
+        print(reference_id, cell_marker)
         cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
                                         .format(cell=cell_marker, reference_id=reference_id)).fetchone()[0]
         cell_ids.append(cell_id)
@@ -29,6 +30,7 @@ def insert_expression_to_db(dialect, driver, host, username, password, database,
             line_items.pop(0)
             gene_id = DB.connection.execute("select id from gene where symbol = '{gene}'"
                                             .format(gene=gene_symbol)).fetchone()
+            print(gene_symbol)
             values = ""
             for i in range(len(cell_markers)):
                 values +="{next}('{gene}', '{cell}', '{CPM}')"\
