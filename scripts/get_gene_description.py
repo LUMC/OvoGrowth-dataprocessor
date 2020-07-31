@@ -5,8 +5,8 @@ mg = mygene.MyGeneInfo()
 
 
 def get_alias(symbol):
-    result = mg.query(symbol, fields="name,symbol")
     try:
+        result = mg.query(symbol, fields="name,symbol")
         return result['hits'][0]['name']
     except:
         return "NA"
