@@ -10,6 +10,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         n=0
         for line in f:
             [ensg, symbol, description] = line.replace('\n', '').split(';')
+            description = description.replace('"', "")
             symbol = symbol.split(".")[0]
             gene_values += "{next}('{symbol}', '{desc}')".format(next=(", " if n > 0 else ""),
                                                              symbol=symbol, desc=description
