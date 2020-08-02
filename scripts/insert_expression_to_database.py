@@ -4,6 +4,7 @@ from helpers.Database import db
 
 def get_cell_ids(cell_markers, reference_id, DB):
     cell_ids = []
+    print(cell_markers)
     for cell_marker in cell_markers:
         print(reference_id, cell_marker)
         cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
