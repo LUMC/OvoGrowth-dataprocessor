@@ -5,37 +5,33 @@ from helpers.Database import db
 def insert_genes_to_db(dialect, driver, host, username, password, database, gene_file):
     DB = db(dialect, driver, host, username, password)
     DB.connect_to_db(database)
+    DB.connection.execute('ALTER TABLE `gene` DISABLE KEYS')
     with open(gene_file) as f:
-        gene_values = ""
-        n=0
         for line in f:
             try:
                 [ensg, symbol, description] = line.replace('\n', '').split(';')
                 description = description.replace('"', "")
                 symbol = symbol.split(".")[0]
-                gene_values += "{next}('{symbol}', '{desc}')".format(next=(", " if n > 0 else ""),
-                                                                 symbol=symbol, desc=description
-                                                             )
+                gene_values = "('{symbol}', '{desc}')".format(symbol=symbol, desc=description)
+                DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
+                                      .format(values=gene_values))
             except:
                 print("Error in line:\n {n}: {line}".format(n=n, line=line))
-            n=+1
-        DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
-                  .format(values=gene_values))
+    DB.connection.execute('ALTER TABLE `gene` ENABLE KEYS')
+    DB.connection.execute('ALTER TABLE `gene_origin` DISABLE KEYS')
     with open(gene_file) as f:
-        gene_origin_values = ""
-        n=0
         for line in f:
             try:
                 [ensg, symbol, description] = line.replace('\n', '').split(';')
                 symbol = symbol.split(".")[0]
                 gene_id = DB.connection.execute("select id from gene where symbol = '{symbol}'".format(symbol=symbol))\
                     .fetchone()[0]
-                gene_origin_values += "{next}('{gene}', '{ensg}')".format(next=(", " if n > 0 else ""), gene=gene_id, ensg=ensg)
+                gene_origin_values = "('{gene}', '{ensg}')".format( gene=gene_id, ensg=ensg)
+                DB.connection.execute("INSERT IGNORE INTO gene_origin (gene, ensg) VALUES {values}"
+                                      .format(values=gene_origin_values))
             except:
                 print("Error in line:\n {n}: {line}".format(n=n, line=line))
-            n=+1
-        DB.connection.execute("INSERT IGNORE INTO gene_origin (gene, ensg) VALUES {values}"
-                  .format(values=gene_origin_values))
+    DB.connection.execute('ALTER TABLE `gene_origin` ENABLE KEYS')
     DB.connection.close()
 
 
