@@ -6,10 +6,14 @@ def get_cell_ids(cell_markers, reference_id, DB):
     cell_ids = []
     print(cell_markers[0:10])
     for cell_marker in cell_markers:
-        print(cell_marker)
-        # cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
-        #                                 .format(cell=cell_marker, reference_id=reference_id)).fetchone()[0]
-        # cell_ids.append
+        try:
+            if cell_marker is None:
+                continue
+            cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
+                                            .format(cell=cell_marker, reference_id=reference_id)).fetchone()[0]
+            cell_ids.append(cell_id)
+        except:
+            print(" Error in cell {cell}".format(cell=cell_marker))
     return cell_ids
 
 
