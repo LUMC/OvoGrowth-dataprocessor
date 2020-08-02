@@ -16,7 +16,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
                 DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
                                       .format(values=gene_values))
             except:
-                print("Error in line:\n {n}: {line}".format(n=n, line=line))
+                print("Error in line:\n {line}".format( line=line))
     DB.connection.execute('ALTER TABLE `gene` ENABLE KEYS')
     DB.connection.execute('ALTER TABLE `gene_origin` DISABLE KEYS')
     with open(gene_file) as f:
@@ -30,7 +30,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
                 DB.connection.execute("INSERT IGNORE INTO gene_origin (gene, ensg) VALUES {values}"
                                       .format(values=gene_origin_values))
             except:
-                print("Error in line:\n {n}: {line}".format(n=n, line=line))
+                print("Error in line:\n {line}".format( line=line))
     DB.connection.execute('ALTER TABLE `gene_origin` ENABLE KEYS')
     DB.connection.close()
 
