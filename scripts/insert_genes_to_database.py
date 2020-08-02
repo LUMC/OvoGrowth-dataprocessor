@@ -10,7 +10,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         for line in f:
             try:
                 [ensg, symbol, description] = line.replace('\n', '').split(';')
-                description = description.replace('"', "")
+                description = description.replace('"', "").replace("'", "")
                 symbol = symbol.split(".")[0]
                 gene_values = "('{symbol}', '{desc}')".format(symbol=symbol, desc=description)
                 DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
