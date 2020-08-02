@@ -9,12 +9,15 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         gene_values = ""
         n=0
         for line in f:
-            [ensg, symbol, description] = line.replace('\n', '').split(';')
-            description = description.replace('"', "")
-            symbol = symbol.split(".")[0]
-            gene_values += "{next}('{symbol}', '{desc}')".format(next=(", " if n > 0 else ""),
-                                                             symbol=symbol, desc=description
+            try:
+                [ensg, symbol, description] = line.replace('\n', '').split(';')
+                description = description.replace('"', "")
+                symbol = symbol.split(".")[0]
+                gene_values += "{next}('{symbol}', '{desc}')".format(next=(", " if n > 0 else ""),
+                                                                 symbol=symbol, desc=description
                                                              )
+            except:
+                print("Error in line:\n {n}: {line}".format(n=n, line=line))
             n=+1
         DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
                   .format(values=gene_values))
@@ -22,11 +25,14 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
         gene_origin_values = ""
         n=0
         for line in f:
-            [ensg, symbol, description] = line.replace('\n', '').split(';')
-            symbol = symbol.split(".")[0]
-            gene_id = DB.connection.execute("select id from gene where symbol = '{symbol}'".format(symbol=symbol))\
-                .fetchone()[0]
-            gene_origin_values += "{next}('{gene}', '{ensg}')".format(next=(", " if n > 0 else ""), gene=gene_id, ensg=ensg)
+            try:
+                [ensg, symbol, description] = line.replace('\n', '').split(';')
+                symbol = symbol.split(".")[0]
+                gene_id = DB.connection.execute("select id from gene where symbol = '{symbol}'".format(symbol=symbol))\
+                    .fetchone()[0]
+                gene_origin_values += "{next}('{gene}', '{ensg}')".format(next=(", " if n > 0 else ""), gene=gene_id, ensg=ensg)
+            except:
+                print("Error in line:\n {n}: {line}".format(n=n, line=line))
             n=+1
         DB.connection.execute("INSERT IGNORE INTO gene_origin (gene, ensg) VALUES {values}"
                   .format(values=gene_origin_values))
