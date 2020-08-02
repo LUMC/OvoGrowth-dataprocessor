@@ -6,10 +6,10 @@ def get_cell_ids(cell_markers, reference_id, DB):
     cell_ids = []
     print(cell_markers[0:10])
     for cell_marker in cell_markers:
-        print(reference_id, cell_marker)
-        cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
-                                        .format(cell=cell_marker, reference_id=reference_id)).fetchone()[0]
-        cell_ids.append(cell_id)
+        print(cell_marker)
+        # cell_id = DB.connection.execute('select id from cell where cell_marker = "{cell}" and dataset="{reference_id}"'
+        #                                 .format(cell=cell_marker, reference_id=reference_id)).fetchone()[0]
+        # cell_ids.append
     return cell_ids
 
 
