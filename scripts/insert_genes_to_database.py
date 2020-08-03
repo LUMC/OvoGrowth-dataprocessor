@@ -12,12 +12,10 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
                 [ensg, symbol, description] = line.replace('\n', '').split(';')
                 description = description.replace('"', "").replace("'", "")
                 symbol = symbol.split(".")[0]
-                gene_values = "('{symbol}', '{desc}')".format(symbol=symbol, desc=description)
-                DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES {values}"
-                                      .format(values=gene_values))
-            except Exception as a :
+                gene_values = "()".format()
+                DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES ('{symbol}', '{desc}')"
+                                      .format(symbol=symbol, desc=description))
                 print("Error in line:\n {line}".format( line=line))
-                print(a)
     DB.connection.execute('ALTER TABLE `gene` ENABLE KEYS')
     DB.connection.execute('ALTER TABLE `gene_origin` DISABLE KEYS')
     with open(gene_file) as f:
