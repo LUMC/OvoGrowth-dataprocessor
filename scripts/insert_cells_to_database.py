@@ -12,6 +12,7 @@ def insert_cells_to_db(dialect, driver, host, username, password, database, cell
             n += 1
             if n == 1:
                 continue
+            print(line.replace('\n', '').split('\t'))
             [cell_marker, cluster_id, tsne_1, tsne_2] = line.replace('\n', '').split('\t')
             print(cell_marker, cluster_id, tsne_1, tsne_2)
             values += "{next}('{dataset}', '{cell_marker}', " \

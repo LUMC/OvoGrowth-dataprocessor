@@ -13,7 +13,7 @@ def insert_genes_to_db(dialect, driver, host, username, password, database, gene
             symbol = symbol.split(".")[0]
             DB.connection.execute("INSERT IGNORE INTO gene (symbol, description) VALUES ('{symbol}', '{desc}')"
                                   .format(symbol=symbol, desc=description))
-            print("Error in line:\n {line}".format( line=line))
+            print("Inserted line:\n {line}".format( line=line))
     DB.connection.execute('ALTER TABLE `gene` ENABLE KEYS')
     DB.connection.execute('ALTER TABLE `gene_origin` DISABLE KEYS')
     with open(gene_file) as f:
