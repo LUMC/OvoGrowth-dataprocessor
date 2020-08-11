@@ -25,7 +25,7 @@ pip3 install -r requirements.txt
 
 The workflow strictly relies on the settings of a configuration file. All parameters all required. The DB
 parameters refer to the MySQL user that can be used for interaction with the database.
-All datasets that are wished to be included in the execution of the pipeline, need to be placed in the input folder.
+All datasets that are wished to be included in the execution of the pipeline, **need to be placed in the input folder.**
 The output folder will contain all the pipeline results. 
 
 The config file is typically a **yaml (.yml)** file and is not restricted to a specific naming. 
@@ -37,9 +37,9 @@ DB_USERNAME: worker
 DB_PASSWORD: pass
 
 append_datasets: 0/1
-files_dataset:
-  - input/Example
-  - input/Example2
+dataset_names:
+  - Example
+  - Example2
 ```
 
 All input data folders are required to have following files
